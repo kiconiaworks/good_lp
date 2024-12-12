@@ -57,6 +57,9 @@ pub fn scip(to_solve: UnsolvedProblem) -> SCIPProblem {
         var_map.insert(var, id);
     }
 
+    model.set_param("heuristics/undercover", true);
+    model.set_param("nodeselection/childsel", "bestbound")?;
+
     SCIPProblem {
         model,
         id_for_var: var_map,
