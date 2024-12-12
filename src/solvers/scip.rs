@@ -25,7 +25,6 @@ use crate::{Constraint, Variable};
 /// to be used with [UnsolvedProblem::using].
 pub fn scip(to_solve: UnsolvedProblem) -> SCIPProblem {
     let mut model = Model::new()
-        .hide_output()
         .include_default_plugins()
         .create_prob("problem")
         .set_obj_sense(match to_solve.direction {
