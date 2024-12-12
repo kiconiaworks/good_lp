@@ -58,7 +58,7 @@ pub fn scip(to_solve: UnsolvedProblem) -> SCIPProblem {
     }
 
     model.set_param("heuristics/undercover", true);
-    model.set_param("nodeselection/childsel", "bestbound")?;
+    model.set_int_param("nodeselection/childsel", "bestbound")?;
 
     SCIPProblem {
         model,
