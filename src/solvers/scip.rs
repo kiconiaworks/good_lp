@@ -30,7 +30,37 @@ pub fn scip(to_solve: UnsolvedProblem) -> SCIPProblem {
         .set_obj_sense(match to_solve.direction {
             ObjectiveDirection::Maximisation => ObjSense::Maximize,
             ObjectiveDirection::Minimisation => ObjSense::Minimize,
-        });
+        })
+        // st emphasis cpsolver
+        .set_int_param("display/verblevel", 0)
+        .expect("Failed to set verbosity level")
+        .set_int_param("conflict/minmaxvars", 10)
+        .expect("Failed to set conflict/minmaxvars")
+        .set_int_param("conflict/fuiplevels", 1)
+        .expect("Failed to set conflict/fuiplevels")
+        .set_int_param("conflict/reconvlevels", 0)
+        .expect("Failed to set conflict/reconvlevels")
+        .set_int_param("conflict/restartnum", 250)
+        .expect("Failed to set conflict/restartnum")
+        .set_real_param("conflict/restartfac", 2.0)
+        .expect("Failed to set conflict/restartfac")
+        .set_real_param("conflict/conflictweight", 1.0)
+        .expect("Failed to set conflict/conflictweight")
+        .set_bool_param("constraints/disableenfops", true)
+        .expect("Failed to set constraints/disableenfops")
+        .set_bool_param("history/valuebased", true)
+        .expect("Failed to set history/valuebased")
+        .set_int_param("lp/solvefreq", -1)
+        .expect("Failed to set lp/solvefreq")
+        // .set_str_param("nodeselection/childsel", "d")
+        // .expect("Failed to set nodeselection/childsel")
+        .set_real_param("numerics/boundstreps", 1e-6)
+        .expect("Failed to set numerics/boundstreps")
+        .set_int_param("presolving/maxrestarts", 10)
+        .expect("Failed to set presolving/maxrestarts")
+        .set_int_param("nodeselection/dfs/stdpriority", i32::MAX / 4)
+        .expect("Failed to set nodeselection/dfs/stdpriority");
+
     let mut var_map = HashMap::new();
 
     for (
@@ -56,9 +86,6 @@ pub fn scip(to_solve: UnsolvedProblem) -> SCIPProblem {
         let id = model.add_var(min, max, coeff, name.as_str(), var_type);
         var_map.insert(var, id);
     }
-
-    model.set_param("heuristics/undercover", true);
-    model.set_int_param("nodeselection/childsel", "bestbound")?;
 
     SCIPProblem {
         model,
